@@ -1,23 +1,36 @@
+
+
+require('marko/node-require');
 const Koa = require("koa");
 const Router = require("koa-router");
-const KoaBody = require("koa-body");
+const koaBody = require("koa-body");
+const serve = require('koa-static');
 const jquery = require("jquery");
 const jsdom = require("jsdom");
+
+
+
+const template = require('./views/index.marco')
+
 const { JSDOM } = jsdom;
-
-
 const app = new Koa();
 const router = new Router();
 
 app
-   .use(KoaBody())
+   .use(serve(__dirname + '/public'))
+   .use(koaBody())
    .use(router.routes())
    .use(router.allowedMethods());
 
 app.listen(process.env.PORT || 3000);
 
 
-router.get("/result/ru", async (ctx, next) => {
+
+router.get("/", (ctx, next) => {
+	ctx.body = template.stream({});
+});
+
+router.get("/results/ru", async (ctx, next) => {	
 	var resp = [];
 	await JSDOM.fromURL("http://www.sport-express.ru/live/football/", {
 
